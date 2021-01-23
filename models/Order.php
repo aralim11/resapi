@@ -70,6 +70,60 @@ class Order
         return false;
     }
 
+    // Update Data
+    public function update()
+    {
+        $sql = 'UPDATE ' . $this->table . ' SET order_id = :order_id, order_description = :order_description WHERE id = :id';
+
+        // Prepare statement
+        $result = $this->conn->prepare($sql);
+
+        // Clean data
+        $this->order_id = htmlspecialchars(strip_tags($this->order_id));
+        $this->order_description = htmlspecialchars(strip_tags($this->order_description));
+        $this->id = htmlspecialchars(strip_tags($this->id));
+
+        // Bind data
+        $result->bindParam(':order_id', $this->order_id);
+        $result->bindParam(':order_description', $this->order_description);
+        $result->bindParam(':id', $this->id);
+
+        if ($result->execute()) {
+            return true;
+        }
+
+        // Print error if something goes wrong
+        printf("Error: %s.\n", $result->error);
+
+        return false;
+    }
+
+    // Delete Order
+    public function delete()
+    {
+        // Create query
+        $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
+
+        // Prepare statement
+        $stmt = $this->conn->prepare($query);
+
+        // Clean data
+        $this->id = htmlspecialchars(strip_tags($this->id));
+
+        // Bind data
+        $stmt->bindParam(':id', $this->id);
+
+        // Execute query
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        // Print error if something goes wrong
+        printf("Error: %s.\n", $stmt->error);
+
+        return false;
+    }
+
 
 }
 
